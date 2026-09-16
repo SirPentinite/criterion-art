@@ -1,0 +1,16 @@
+name: "Criterion Collection Art"
+guid: "8c052238-e202-49d1-8b6b-287430af58b5"
+version: "1.0.0.0"
+targetAbi: "10.9.0.0"
+framework: "net8.0"
+overview: "Fetches cover art and posters from the Criterion Collection website."
+description: >
+  Scrapes criterion.com to match movies in your library against their
+  catalog and pull box art / poster images as an alternate image provider.
+owner: "yourgithubusername"
+category: "Metadata"
+artifacts:
+  - "CriterionArt.dll"
+  - "HtmlAgilityPack.dll"
+changelog: >
+  - Initial release: search matching, scoring, and image retrieval.

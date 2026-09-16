@@ -1,0 +1,5 @@
+/home/andrew/CriterionArt/obj/Release/net8.0/CriterionArt.csproj.AssemblyReference.cache
+/home/andrew/CriterionArt/obj/Release/net8.0/CriterionArt.GeneratedMSBuildEditorConfig.editorconfig
+/home/andrew/CriterionArt/obj/Release/net8.0/CriterionArt.AssemblyInfoInputs.cache
+/home/andrew/CriterionArt/obj/Release/net8.0/CriterionArt.AssemblyInfo.cs
+/home/andrew/CriterionArt/obj/Release/net8.0/CriterionArt.csproj.CoreCompileInputs.cache

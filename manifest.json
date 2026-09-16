@@ -1,0 +1,20 @@
+[
+    {
+        "guid": "8c052238-e202-49d1-8b6b-287430af58b5",
+        "name": "Criterion Collection Art",
+        "description": "Scrapes criterion.com to match movies in your library against their catalog and pull box art / poster images as an alternate image provider.\n",
+        "overview": "Fetches cover art and posters from the Criterion Collection website.",
+        "owner": "yourgithubusername",
+        "category": "Metadata",
+        "versions": [
+            {
+                "version": "1.0.0.0",
+                "changelog": "- Initial release: search matching, scoring, and image retrieval.",
+                "targetAbi": "10.9.0.0",
+                "sourceUrl": "https://github.com/sirpentinite/criterion-art/releases/download/v1.0.0.0/criterion-collection-art_1.0.0.0.zip/criterion-collection-art/criterion-collection-art_1.0.0.0.zip",
+                "checksum": "a03281e03e7ed448f0741d38a562f74d",
+                "timestamp": "2026-09-15T18:11:14Z"
+            }
+        ]
+    }
+]

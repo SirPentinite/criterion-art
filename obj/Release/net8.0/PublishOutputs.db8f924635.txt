@@ -1,0 +1,17 @@
+/tmp/tmpce5kvp5s/CriterionArt.dll
+/tmp/tmpce5kvp5s/CriterionArt.deps.json
+/tmp/tmpce5kvp5s/CriterionArt.pdb
+/tmp/tmpce5kvp5s/Diacritics.dll
+/tmp/tmpce5kvp5s/HtmlAgilityPack.dll
+/tmp/tmpce5kvp5s/ICU4N.dll
+/tmp/tmpce5kvp5s/ICU4N.Transliterator.dll
+/tmp/tmpce5kvp5s/J2N.dll
+/tmp/tmpce5kvp5s/MediaBrowser.Common.dll
+/tmp/tmpce5kvp5s/MediaBrowser.Controller.dll
+/tmp/tmpce5kvp5s/Jellyfin.Data.dll
+/tmp/tmpce5kvp5s/Jellyfin.Extensions.dll
+/tmp/tmpce5kvp5s/MediaBrowser.Model.dll
+/tmp/tmpce5kvp5s/Emby.Naming.dll
+/tmp/tmpce5kvp5s/Microsoft.Extensions.Configuration.Binder.dll
+/tmp/tmpce5kvp5s/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/tmp/tmpce5kvp5s/Microsoft.Extensions.Logging.Abstractions.dll
