@@ -1,0 +1,14 @@
+{
+  "category": "Metadata",
+  "changelog": "- Initial release: search matching, scoring, and image retrieval.\n- Added caching for repeat lookups.\n- Improved Cloudflare handling.\n",
+  "description": "Fetches cover art and posters from the Criterion Collection website.",
+  "guid": "8c052238-e202-49d1-8b6b-287430af58b5",
+  "name": "Criterion Collection Art",
+  "overview": "Fetches cover art and posters from the Criterion Collection website.",
+  "owner": "SirPentinite",
+  "targetAbi": "12.1.0.0",
+  "timestamp": "2026-10-01T23:33:00.0000000Z",
+  "version": "1.0.0.10",
+  "status": "Active",
+  "autoUpdate": true
+}

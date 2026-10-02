@@ -10,32 +10,22 @@ internal record SearchCandidate(string Title, string? Director, int? Year, strin
 
 internal static class CriterionSearchParser
 {
-    public static List<SearchCandidate> ParseLivewireResponse(string responseJson)
+    public static List<SearchCandidate> ParseSnapshot(string snapshotJson)
     {
         var candidates = new List<SearchCandidate>();
 
-        using var doc = JsonDocument.Parse(responseJson);
-        var snapshotStr = doc.RootElement
-            .GetProperty("components")[0]
-            .GetProperty("snapshot")
-            .GetString();
-
-        if (snapshotStr is null) return candidates;
-
-        using var snapshotDoc = JsonDocument.Parse(snapshotStr);
+        using var snapshotDoc = JsonDocument.Parse(snapshotJson);
         var products = snapshotDoc.RootElement.GetProperty("data").GetProperty("products");
-
-        // Livewire wraps arrays as [items, {"s":"arr"}] — first element is the real payload
         var items = products[0];
 
         foreach (var pair in items.EnumerateArray())
         {
-            var product = pair[0]; // [productObject, {"s":"arr"}]
+            var product = pair[0];
 
             var title = product.GetProperty("title").GetString();
             if (string.IsNullOrWhiteSpace(title)) continue;
 
-            var slug = product.GetProperty("slug").GetString(); // e.g. "films/175-wild-strawberries"
+            var slug = product.GetProperty("slug").GetString();
             var imageUrl = product.GetProperty("image_url").GetString();
             var director = product.TryGetProperty("directors", out var d) ? d.GetString() : null;
 
@@ -45,9 +35,7 @@ internal static class CriterionSearchParser
 
             if (string.IsNullOrEmpty(slug) || string.IsNullOrEmpty(imageUrl)) continue;
 
-            candidates.Add(new SearchCandidate(
-                title, director, year, imageUrl,
-                $"https://www.criterion.com/{slug}"));
+            candidates.Add(new SearchCandidate(title, director, year, imageUrl, $"https://www.criterion.com/{slug}"));
         }
 
         return candidates;
