@@ -12,6 +12,7 @@ category: "Metadata"
 artifacts:
   - "CriterionArt.dll"
   - "HtmlAgilityPack.dll"
+  - "SkiaSharp.dll"
 changelog: >
   - Initial release: search matching, scoring, and image retrieval.
 imageUrl: ""

@@ -14,6 +14,9 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.IO;
+using SkiaSharp;
+using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace CriterionArt.Provider;
 
@@ -68,6 +71,15 @@ internal static class FlareSolverrClient
 
 public class CriterionImageProvider : IRemoteImageProvider
 {
+    static CriterionImageProvider()
+    {
+        var pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        var skiaPath = Path.Combine(pluginDir, "libSkiaSharp.so");
+        if (File.Exists(skiaPath))
+        {
+            NativeLibrary.Load(skiaPath);
+        }
+    }
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<CriterionImageProvider> _logger;
     private CookieContainer _sharedCookies;
@@ -85,7 +97,7 @@ public class CriterionImageProvider : IRemoteImageProvider
 
 		var handler = new HttpClientHandler { CookieContainer = _sharedCookies };
 		_persistentClient = new HttpClient(handler);
-		_persistentClient.Timeout = TimeSpan.FromSeconds(15);
+		_persistentClient.Timeout = TimeSpan.FromSeconds(90);
 		_persistentClient.DefaultRequestHeaders.UserAgent.ParseAdd(
 			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 		_persistentClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
@@ -96,7 +108,7 @@ public class CriterionImageProvider : IRemoteImageProvider
     {
         var handler = new HttpClientHandler { CookieContainer = cookies };
         var client = new HttpClient(handler);
-		client.Timeout = TimeSpan.FromSeconds(15);
+		client.Timeout = TimeSpan.FromSeconds(90);
 		client.DefaultRequestHeaders.UserAgent.ParseAdd(
 			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 		client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
@@ -216,7 +228,52 @@ public class CriterionImageProvider : IRemoteImageProvider
 			return results;
 		}
 	}
-	public Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken ct)
-		=> _httpClientFactory.CreateClient().GetAsync(url, ct);
+	
+	public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken ct)
+	{
+		var client = _httpClientFactory.CreateClient();
+		var bytes = await client.GetByteArrayAsync(url, ct);
+
+		using var original = SKBitmap.Decode(bytes);
+		if (original is null)
+		{
+			// Decode failed — fall back to passing the original bytes through unchanged
+			var fallback = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+			{
+				Content = new ByteArrayContent(bytes)
+			};
+			fallback.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+			return fallback;
+		}
+
+		const double targetRatio = 2.0 / 3.0; // width:height
+		var currentRatio = (double)original.Width / original.Height;
+
+		int canvasWidth = original.Width;
+		int canvasHeight = original.Height;
+
+		if (currentRatio > targetRatio)
+			canvasHeight = (int)Math.Round(original.Width / targetRatio);
+		else if (currentRatio < targetRatio)
+			canvasWidth = (int)Math.Round(original.Height * targetRatio);
+
+		using var surface = SKSurface.Create(new SKImageInfo(canvasWidth, canvasHeight));
+		var canvas = surface.Canvas;
+		canvas.Clear(SKColors.Black); // padding color — swap for SKColors.Transparent if preferred
+
+		float x = (canvasWidth - original.Width) / 2f;
+		float y = (canvasHeight - original.Height) / 2f;
+		canvas.DrawBitmap(original, x, y, new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.None));
+
+		using var image = surface.Snapshot();
+		using var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
+
+		var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+		{
+			Content = new ByteArrayContent(data.ToArray())
+		};
+		response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+		return response;
+	}
 	
 } 
